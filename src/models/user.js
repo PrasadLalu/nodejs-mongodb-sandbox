@@ -15,6 +15,11 @@ const userSchema = new mongoose.Schema({
         required: true,
         select: false,
     },
+    role: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Role',
+        required: true,
+    },
     is_deleted: {
         type: Boolean,
         default: false
@@ -24,7 +29,7 @@ const userSchema = new mongoose.Schema({
     versionKey: false
 });
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
         try {
             const salt = await bcrypt.genSalt(10);

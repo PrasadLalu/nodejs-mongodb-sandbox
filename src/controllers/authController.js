@@ -3,13 +3,17 @@ const common = require('../utils/common');
 
 const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
 
         const user = await User.create({
             name,
             email,
-            password
+            role,
+            password,
         });
+
+        user['password'] = undefined;
+
         return res.send({ data: user });
     } catch (error) {
         return res.send(500).send({ error });
@@ -19,7 +23,10 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        let user = await User.findOne({ email }).select('+password');
+        let user = await User.findOne({
+            email,
+            is_deleted: false,
+        }).select('+password');
         if (!user) {
             return res.status(401).send({ message: 'Unauthorized user.' });
         }
@@ -34,7 +41,7 @@ const login = async (req, res) => {
             email: user.email,
         });
         user['password'] = undefined;
-        
+
         return res.send({ data: user, token });
     } catch (error) {
         return res.send(500).send({ error });
