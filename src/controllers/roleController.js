@@ -1,14 +1,10 @@
 const Role = require('../models/role');
+const roleService = require('../services/role/role-service');
 
 const create = async (req, res) => {
     try {
-        const { name, description } = req.body;
-
-        const role = await Role.create({
-            name,
-            description,
-        });
-        return res.send({ data: role });
+        const result = await roleService.create(req.body);
+        return res.status(result.code).send(result);
     } catch (error) {
         return res.send(500).send({ error });
     }
@@ -16,10 +12,8 @@ const create = async (req, res) => {
 
 const findAll = async (req, res) => {
     try {
-        const roles = await Role.find({
-            is_deleted: false,
-        });
-        return res.send({ data: roles });
+        const result = await roleService.findAll();
+        return res.status(result.code).send(result);
     } catch (error) {
         return res.send(500).send({ error });
     }
